@@ -1,0 +1,994 @@
+# Australian Tax Office Receipt Extraction Prompts
+# This file contains prompts for extracting information from Australian receipts
+
+# === RECOMMENDED PRODUCTION PROMPTS (Key-Value Format) ===
+# These prompts provide superior robustness vs JSON parsing
+
+# PRODUCTION DEFAULT: Key-Value format prompt for improved robustness with Australian business fields
+key_value_receipt_prompt: |
+  <image>
+  Extract information from this Australian receipt and return in KEY-VALUE format.
+  
+  Use this exact format:
+  DATE: [purchase date in DD/MM/YYYY format]
+  STORE: [store name in capitals]
+  ABN: [Australian Business Number - XX XXX XXX XXX format]
+  PAYER: [customer/member name if visible]
+  TAX: [GST amount]
+  TOTAL: [total amount including GST]
+  PRODUCTS: [item1 | item2 | item3]
+  QUANTITIES: [qty1 | qty2 | qty3]
+  PRICES: [price1 | price2 | price3]
+  
+  Example:
+  DATE: 16/03/2023
+  STORE: WOOLWORTHS
+  TAX: 3.82
+  TOTAL: 42.08
+  PRODUCTS: Milk 2L | Bread Multigrain | Eggs Free Range 12pk
+  QUANTITIES: 1 | 2 | 1
+  PRICES: 4.50 | 8.00 | 7.60
+  
+  FORMATTING REQUIREMENTS:
+  - Product names: Use Title Case (Milk 2L, not MILK 2L or milk 2l)
+  - Prices: Read carefully from receipt, match exact amounts shown
+  - Store names: Use ALL CAPITALS (WOOLWORTHS, COLES, ALDI)
+  - Dates: DD/MM/YYYY format (Australian standard)
+  - Use pipe (|) to separate multiple items in lists
+  - Extract ALL products from the receipt
+  - Ensure products, quantities, and prices lists have same length
+  
+  CRITICAL: 
+  - Product names must be in Title Case format: "Chicken Breast" not "CHICKEN BREAST"
+  - Read prices carefully from receipt - accuracy is essential
+  - GST (Goods and Services Tax) is 10% in Australia
+  
+  Return ONLY the key-value pairs above. No explanations.
+
+# === BANK STATEMENT PROCESSING PROMPTS ===
+# New functionality for processing Australian bank statements with highlight detection
+
+# Main bank statement analysis prompt for general processing
+bank_statement_analysis_prompt: |
+  <image>
+  Analyze this Australian bank statement and extract transaction information.
+  
+  BANK STATEMENT FORMAT:
+  BANK: [Name of financial institution]
+  ACCOUNT_HOLDER: [Customer name]
+  ACCOUNT_NUMBER: [Account number - mask middle digits]
+  BSB: [Bank State Branch code if visible]
+  STATEMENT_PERIOD: [Start date - End date]
+  OPENING_BALANCE: [Starting balance]
+  CLOSING_BALANCE: [Ending balance]
+  
+  TRANSACTIONS: [Extract each transaction using format below]
+  DATE: [DD/MM/YYYY] | DESCRIPTION: [Transaction description] | DEBIT: [Amount withdrawn] | CREDIT: [Amount deposited] | BALANCE: [Balance after transaction]
+  
+  HIGHLIGHTED_AREAS: [If any areas are highlighted/marked, extract those transaction details separately]
+  
+  INSTRUCTIONS:
+  - Extract ALL visible transactions in chronological order
+  - Pay special attention to highlighted/marked transactions
+  - Use Australian date format DD/MM/YYYY
+  - Include all transaction descriptions exactly as shown
+  - Note any highlighted areas or user markings
+  - Identify the bank name from logos/headers
+  
+  Return in the specified format above.
+
+# Bank statement prompt optimized for highlighted transaction extraction
+bank_statement_highlighted_prompt: |
+  <image>
+  This bank statement contains highlighted transactions that the taxpayer has marked as work-related expenses.
+  
+  PRIORITY: Focus on extracting highlighted/marked transactions first, then process the full statement.
+  
+  HIGHLIGHTED_TRANSACTION_FORMAT:
+  HIGHLIGHT_DETECTED: [Yes/No]
+  HIGHLIGHT_COLOR: [Yellow/Pink/Green/Red/Other]
+  HIGHLIGHTED_TRANSACTIONS:
+  DATE: [DD/MM/YYYY] | DESCRIPTION: [Merchant/Description] | AMOUNT: [Debit amount] | WORK_RELEVANCE: [High/Medium/Low]
+  
+  FULL_STATEMENT_ANALYSIS:
+  BANK: [Financial institution name]
+  ACCOUNT_HOLDER: [Customer name]
+  ACCOUNT_NUMBER: [Account number - mask middle digits]
+  BSB: [Bank State Branch code if visible]
+  STATEMENT_PERIOD: [Start date - End date]
+  OPENING_BALANCE: [Starting balance]
+  CLOSING_BALANCE: [Ending balance]
+  
+  TRANSACTIONS:
+  DATE: [DD/MM/YYYY] | DESCRIPTION: [Transaction description] | DEBIT: [Amount withdrawn] | CREDIT: [Amount deposited] | BALANCE: [Balance after transaction] | HIGHLIGHTED: [Yes/No]
+  
+  WORK_EXPENSE_ASSESSMENT:
+  - Analyze each highlighted transaction for work-related expense potential
+  - Identify merchant categories (fuel, office supplies, travel, etc.)
+  - Assess ATO deductibility likelihood
+  - Note any patterns in highlighted transactions
+  
+  Focus on transactions that appear highlighted or marked by the user, as these are likely work-related expenses the taxpayer wants to claim.
+
+# ATO compliance-focused bank statement prompt
+bank_statement_ato_compliance_prompt: |
+  <image>
+  Extract bank statement information for Australian Tax Office work-related expense claims.
+  
+  ATO REQUIREMENTS for bank statement evidence:
+  1. Transaction date and description
+  2. Amount of expense
+  3. Business purpose (if determinable from description)
+  4. Account holder name matching taxpayer
+  
+  EXTRACTION_PRIORITIES:
+  1. HIGHLIGHTED TRANSACTIONS (user-marked as work expenses)
+  2. Business-relevant merchants (Officeworks, petrol stations, airlines)
+  3. Professional services (accounting, legal, consulting)
+  4. Travel and transport expenses
+  5. Equipment and supply purchases
+  
+  BANK STATEMENT FORMAT:
+  BANK: [Financial institution name]
+  ACCOUNT_HOLDER: [Customer name]
+  ACCOUNT_NUMBER: [Account number - mask middle digits]
+  BSB: [Bank State Branch code if visible]
+  STATEMENT_PERIOD: [Start date - End date in DD/MM/YYYY format]
+  OPENING_BALANCE: [Starting balance]
+  CLOSING_BALANCE: [Ending balance]
+  
+  TRANSACTIONS:
+  DATE: [DD/MM/YYYY] | DESCRIPTION: [Transaction description] | DEBIT: [Amount withdrawn] | CREDIT: [Amount deposited] | BALANCE: [Balance after transaction] | WORK_RELEVANCE: [High/Medium/Low/None]
+  
+  WORK_RELEVANCE_CRITERIA:
+  - High: Clear work expenses (fuel, office supplies, professional services)
+  - Medium: Potentially work-related (meals, equipment, training)
+  - Low: Possibly work-related (general purchases, subscriptions)
+  - None: Personal expenses (groceries, entertainment, personal items)
+  
+  COMPLIANCE_ASSESSMENT:
+  - Rate each transaction's ATO compliance (0-100%)
+  - Identify missing information for full deductibility
+  - Suggest additional documentation needed
+  
+  Extract ALL visible transactions and assess their work-related potential.
+  
+  CRITICAL: Use ONLY the exact format specified above. Do NOT use markdown, bullets, or natural language formatting.
+
+# Comprehensive bank statement prompt for detailed analysis
+bank_statement_comprehensive_prompt: |
+  <image>
+  Perform comprehensive analysis of this Australian bank statement for tax and business purposes.
+  
+  COMPLETE_EXTRACTION_FORMAT:
+  
+  BANK_DETAILS:
+  BANK: [Financial institution name]
+  ACCOUNT_HOLDER: [Customer name]
+  ACCOUNT_NUMBER: [Account number - mask middle digits]
+  BSB: [Bank State Branch code if visible]
+  STATEMENT_PERIOD: [Start date - End date in DD/MM/YYYY format]
+  OPENING_BALANCE: [Starting balance]
+  CLOSING_BALANCE: [Ending balance]
+  
+  TRANSACTION_ANALYSIS:
+  DATE: [DD/MM/YYYY] | DESCRIPTION: [Full transaction description] | DEBIT: [Amount withdrawn] | CREDIT: [Amount deposited] | BALANCE: [Running balance] | CATEGORY: [Transaction type] | WORK_POTENTIAL: [0-100%] | HIGHLIGHTED: [Yes/No]
+  
+  EXPENSE_CATEGORIES:
+  - FUEL: Petrol stations (BP, Shell, Caltex, Ampol, etc.)
+  - OFFICE: Office supplies (Officeworks, Staples, etc.)
+  - TRAVEL: Transport, accommodation, flights
+  - PROFESSIONAL: Accounting, legal, consulting services
+  - EQUIPMENT: Computers, tools, machinery
+  - TRAINING: Education, courses, conferences
+  - PARKING: Parking, tolls, car-related expenses
+  - UTILITIES: Phone, internet, utilities if work-related
+  - OTHER: Other potentially deductible expenses
+  
+  HIGHLIGHT_DETECTION:
+  [Identify any areas that appear highlighted, marked, or annotated by the user]
+  
+  ATO_COMPLIANCE_SUMMARY:
+  - Total transactions: [count]
+  - Work-related transactions: [count and total amount]
+  - Highlighted transactions: [count and total amount]  
+  - Compliance rating: [percentage]
+  - Missing information: [list any gaps]
+  - Recommendations: [suggest improvements]
+  
+  Extract every visible transaction with detailed categorization and compliance assessment.
+
+# Simple bank statement prompt for basic extraction
+bank_statement_simple_prompt: |
+  <image>
+  Extract basic information from this bank statement.
+  
+  BANK: [Bank name]
+  ACCOUNT_HOLDER: [Customer name]
+  STATEMENT_PERIOD: [Date range]
+  
+  TRANSACTIONS:
+  [List all transactions with: Date | Description | Amount | Type (Debit/Credit)]
+  
+  Focus on extracting clear transaction information in chronological order.
+
+# === DOCUMENT CLASSIFICATION SYSTEM ===
+# New prompts for automatic document type classification and specialized KEY-VALUE extraction
+
+# Document classification prompt for automatic type detection
+document_classification_prompt: |
+  <image>
+  Analyze this Australian work-related expense document and classify its type.
+  
+  DOCUMENT_TYPES:
+  1. business_receipt - General retail receipt (Woolworths, Coles, Target, etc.)
+  2. tax_invoice - GST tax invoice with ABN (formal business invoice)
+  3. bank_statement - Bank account statement
+  4. fuel_receipt - Petrol/diesel station receipt (BP, Shell, Caltex, etc.)
+  5. meal_receipt - Restaurant/cafe/catering receipt
+  6. accommodation - Hotel/motel/Airbnb receipt
+  7. travel_document - Flight/train/bus ticket or travel booking
+  8. parking_toll - Parking meter/garage or toll road receipt
+  9. equipment_supplies - Office supplies/tools/equipment receipt
+  10. professional_services - Legal/accounting/consulting invoice
+  11. other - Any other work-related document
+  
+  CLASSIFICATION_CRITERIA:
+  - Look for business names, logos, and document layout
+  - Identify specific industry indicators (fuel company logos, hotel chains, etc.)
+  - Check for formal invoice elements (ABN, tax invoice headers)
+  - Consider document structure and typical content
+  
+  RESPONSE_FORMAT:
+  DOCUMENT_TYPE: [type from list above]
+  CONFIDENCE: [High/Medium/Low]
+  REASONING: [Brief explanation of classification decision]
+  SECONDARY_TYPE: [Alternative type if confidence is not High]
+  
+  Focus on Australian businesses and document formats.
+
+# === SPECIALIZED KEY-VALUE EXTRACTION PROMPTS ===
+# These prompts are automatically selected based on document classification
+
+# Business receipt specialized extraction
+business_receipt_extraction_prompt: |
+  <image>
+  Extract information from this Australian business receipt in KEY-VALUE format.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  STORE: [Business name in CAPITALS]
+  ABN: [Australian Business Number if visible - XX XXX XXX XXX format]
+  DATE: [DD/MM/YYYY format]
+  GST: [GST amount - 10% component]
+  TOTAL: [Total amount including GST]
+  ITEMS: [Product1 | Product2 | Product3]
+  QUANTITIES: [Qty1 | Qty2 | Qty3]  
+  PRICES: [Price1 | Price2 | Price3]
+  
+  EXAMPLE OUTPUT:
+  STORE: WOOLWORTHS SUPERMARKETS
+  ABN: 88 000 014 675
+  DATE: 15/06/2024
+  GST: 4.25
+  TOTAL: 46.75
+  ITEMS: Bread White | Milk 2L | Eggs Free Range 12pk
+  QUANTITIES: 1 | 1 | 1
+  PRICES: 3.50 | 5.20 | 8.95
+  
+  ATO_COMPLIANCE_REQUIREMENTS:
+  - Business name and date are mandatory
+  - GST component required for claims over $82.50
+  - ABN validates legitimate business expense
+  - Use pipe (|) separator for multiple items
+
+# Fuel receipt specialized extraction
+fuel_receipt_extraction_prompt: |
+  <image>
+  Extract information from this Australian fuel receipt for work vehicle expense claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  STATION: [Fuel station name - BP, Shell, Caltex, Ampol, etc.]
+  STATION_ADDRESS: [Station location if visible]
+  DATE: [DD/MM/YYYY]
+  TIME: [HH:MM if visible]
+  FUEL_TYPE: [Unleaded, Premium, Diesel, etc.]
+  LITRES: [Fuel quantity in litres]
+  PRICE_PER_LITRE: [Rate per litre - cents format]
+  TOTAL_FUEL_COST: [Total fuel amount before other items]
+  GST: [GST component]
+  TOTAL: [Total amount including GST]
+  PUMP_NUMBER: [Pump number if visible]
+  VEHICLE_KM: [Odometer reading if visible]
+  
+  EXAMPLE OUTPUT:
+  STATION: BP AUSTRALIA
+  STATION_ADDRESS: 123 Main Street, Melbourne VIC
+  DATE: 15/06/2024
+  TIME: 14:35
+  FUEL_TYPE: Unleaded 91
+  LITRES: 45.20
+  PRICE_PER_LITRE: 189.9
+  TOTAL_FUEL_COST: 85.85
+  GST: 7.81
+  TOTAL: 85.85
+  PUMP_NUMBER: 3
+  VEHICLE_KM: 45230
+  
+  ATO_FUEL_REQUIREMENTS:
+  - Date, station name, and total amount are mandatory
+  - Litres and rate per litre support logbook method claims
+  - GST breakdown essential for business vehicle deductions
+  - Vehicle odometer helps verify business vs personal use
+
+# Tax invoice specialized extraction
+tax_invoice_extraction_prompt: |
+  <image>
+  Extract information from this Australian GST tax invoice for business expense claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  DOCUMENT_TYPE: [Must contain "TAX INVOICE" or "INVOICE"]
+  SUPPLIER: [Business/company name]
+  SUPPLIER_ABN: [Supplier's ABN - XX XXX XXX XXX format]
+  SUPPLIER_ADDRESS: [Supplier's business address]
+  CUSTOMER: [Customer/client name]
+  CUSTOMER_ABN: [Customer's ABN if visible]
+  INVOICE_NUMBER: [Invoice reference number]
+  DATE: [Invoice date DD/MM/YYYY]
+  DUE_DATE: [Payment due date if specified]
+  DESCRIPTION: [Services/goods description]
+  SUBTOTAL: [Amount before GST]
+  GST: [GST amount - must be specified separately]
+  TOTAL: [Total amount including GST]
+  
+  EXAMPLE OUTPUT:
+  DOCUMENT_TYPE: TAX INVOICE
+  SUPPLIER: ACME CONSULTING PTY LTD
+  SUPPLIER_ABN: 12 345 678 901
+  SUPPLIER_ADDRESS: 456 Business Street, Sydney NSW 2000
+  CUSTOMER: CLIENT COMPANY PTY LTD
+  INVOICE_NUMBER: INV-2024-0156
+  DATE: 15/06/2024
+  DUE_DATE: 15/07/2024
+  DESCRIPTION: Professional consulting services
+  SUBTOTAL: 500.00
+  GST: 50.00
+  TOTAL: 550.00
+  
+  TAX_INVOICE_REQUIREMENTS:
+  - Must contain "TAX INVOICE" text on document
+  - Supplier ABN mandatory for invoices over $82.50
+  - GST amount must be specified separately from subtotal
+  - Essential for business expense claims and BAS reporting
+
+# Meal receipt specialized extraction
+meal_receipt_extraction_prompt: |
+  <image>
+  Extract information from this Australian meal receipt for business entertainment claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  RESTAURANT: [Restaurant/cafe name]
+  RESTAURANT_ABN: [ABN if visible]
+  DATE: [DD/MM/YYYY]
+  TIME: [HH:MM if visible]
+  MEAL_TYPE: [Breakfast/Lunch/Dinner/Coffee/etc.]
+  ITEMS: [Food item1 | Drink item1 | Food item2]
+  PRICES: [Price1 | Price2 | Price3]
+  SUBTOTAL: [Amount before GST]
+  GST: [GST amount]
+  TOTAL: [Total amount including GST]
+  PAYMENT_METHOD: [Cash/Card/EFTPOS]
+  COVERS: [Number of people if visible]
+  
+  EXAMPLE OUTPUT:
+  RESTAURANT: CAFE MELBOURNE
+  RESTAURANT_ABN: 23 456 789 012
+  DATE: 15/06/2024
+  TIME: 12:30
+  MEAL_TYPE: Lunch
+  ITEMS: Chicken Caesar Salad | Coffee Latte | Sparkling Water
+  PRICES: 18.50 | 4.50 | 3.50
+  SUBTOTAL: 24.09
+  GST: 2.41
+  TOTAL: 26.50
+  PAYMENT_METHOD: EFTPOS
+  COVERS: 2
+  
+  ATO_MEAL_REQUIREMENTS:
+  - Business purpose required for meal entertainment
+  - 50% deductible for entertainment, 100% for employee meals
+  - Date, venue, and amount mandatory
+  - GST breakdown required for claims over $82.50
+
+# Accommodation receipt specialized extraction
+accommodation_receipt_extraction_prompt: |
+  <image>
+  Extract information from this Australian accommodation receipt for business travel claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  HOTEL: [Hotel/accommodation name]
+  HOTEL_ABN: [ABN if visible]
+  GUEST_NAME: [Guest name]
+  BOOKING_REFERENCE: [Booking/confirmation number]
+  CHECK_IN: [DD/MM/YYYY]
+  CHECK_OUT: [DD/MM/YYYY]
+  NIGHTS: [Number of nights]
+  ROOM_TYPE: [Room description]
+  ROOM_RATE: [Nightly rate excluding GST]
+  EXTRAS: [Additional charges if any]
+  SUBTOTAL: [Amount before GST]
+  GST: [GST amount]
+  TOTAL: [Total amount including GST]
+  
+  EXAMPLE OUTPUT:
+  HOTEL: CROWN PLAZA MELBOURNE
+  HOTEL_ABN: 34 567 890 123
+  GUEST_NAME: SMITH, JOHN
+  BOOKING_REFERENCE: CPM2024156789
+  CHECK_IN: 15/06/2024
+  CHECK_OUT: 17/06/2024
+  NIGHTS: 2
+  ROOM_TYPE: Standard King Room
+  ROOM_RATE: 180.00
+  EXTRAS: Parking $25.00 | WiFi $0.00
+  SUBTOTAL: 372.73
+  GST: 37.27
+  TOTAL: 410.00
+  
+  ATO_ACCOMMODATION_REQUIREMENTS:
+  - Business travel purpose required
+  - Dates and duration must be documented
+  - GST breakdown required for tax claims
+  - Location must be away from normal residence
+
+# Travel document specialized extraction
+travel_document_extraction_prompt: |
+  <image>
+  Extract information from this Australian travel document for business travel claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  CARRIER: [Airline/transport company name]
+  CARRIER_ABN: [ABN if visible]
+  PASSENGER: [Passenger name]
+  BOOKING_REFERENCE: [Booking/ticket number]
+  ROUTE: [Origin to Destination]
+  DEPARTURE_DATE: [DD/MM/YYYY]
+  DEPARTURE_TIME: [HH:MM]
+  ARRIVAL_DATE: [DD/MM/YYYY if different]
+  ARRIVAL_TIME: [HH:MM]
+  CLASS: [Economy/Business/First]
+  FARE_TYPE: [Flexible/Saver/etc.]
+  BASE_FARE: [Fare excluding taxes]
+  TAXES_FEES: [Government taxes and fees]
+  GST: [GST amount if applicable]
+  TOTAL: [Total amount paid]
+  
+  EXAMPLE OUTPUT:
+  CARRIER: QANTAS AIRWAYS
+  CARRIER_ABN: 16 009 661 901
+  PASSENGER: SMITH, JOHN
+  BOOKING_REFERENCE: QF23ABC789
+  ROUTE: Sydney (SYD) to Melbourne (MEL)
+  DEPARTURE_DATE: 15/06/2024
+  DEPARTURE_TIME: 08:30
+  ARRIVAL_DATE: 15/06/2024
+  ARRIVAL_TIME: 10:00
+  CLASS: Economy
+  FARE_TYPE: Flex Saver
+  BASE_FARE: 180.00
+  TAXES_FEES: 35.45
+  GST: 19.55
+  TOTAL: 235.00
+  
+  ATO_TRAVEL_REQUIREMENTS:
+  - Business purpose documentation required
+  - Dates and destinations must be recorded
+  - Most domestic travel includes GST
+  - International travel may be GST-free
+
+# Equipment and supplies specialized extraction
+equipment_supplies_extraction_prompt: |
+  <image>
+  Extract information from this Australian equipment/supplies receipt for business asset claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  SUPPLIER: [Business/store name]
+  SUPPLIER_ABN: [ABN if visible]
+  DATE: [DD/MM/YYYY]
+  ITEMS: [Item1 | Item2 | Item3]
+  DESCRIPTIONS: [Description1 | Description2 | Description3]
+  QUANTITIES: [Qty1 | Qty2 | Qty3]
+  UNIT_PRICES: [Price1 | Price2 | Price3]
+  TOTAL_PRICES: [Total1 | Total2 | Total3]
+  CATEGORY: [Office Supplies/Computer Equipment/Tools/etc.]
+  SUBTOTAL: [Amount before GST]
+  GST: [GST amount]
+  TOTAL: [Total amount including GST]
+  
+  EXAMPLE OUTPUT:
+  SUPPLIER: OFFICEWORKS
+  SUPPLIER_ABN: 13 004 394 439
+  DATE: 15/06/2024
+  ITEMS: Laptop Stand | Wireless Mouse | USB-C Cable
+  DESCRIPTIONS: Adjustable Aluminium Stand | Bluetooth 2.4GHz | 2m Charging Cable
+  QUANTITIES: 1 | 1 | 2
+  UNIT_PRICES: 89.00 | 45.00 | 25.00
+  TOTAL_PRICES: 89.00 | 45.00 | 50.00
+  CATEGORY: Computer Equipment
+  SUBTOTAL: 167.27
+  GST: 16.73
+  TOTAL: 184.00
+  
+  ATO_EQUIPMENT_REQUIREMENTS:
+  - Business use percentage must be determined
+  - Items over $300 may require depreciation
+  - GST registered businesses can claim GST credits
+  - Detailed description aids asset classification
+
+# Professional services specialized extraction
+professional_services_extraction_prompt: |
+  <image>
+  Extract information from this Australian professional services invoice for business expense claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  SERVICE_PROVIDER: [Professional/firm name]
+  PROVIDER_ABN: [Professional's ABN]
+  PROVIDER_ADDRESS: [Business address]
+  CLIENT: [Client/customer name]
+  INVOICE_NUMBER: [Invoice reference]
+  DATE: [Invoice date DD/MM/YYYY]
+  SERVICE_PERIOD: [Period covered by services]
+  SERVICES: [Service1 | Service2 | Service3]
+  HOURS: [Hours1 | Hours2 | Hours3]
+  RATES: [Rate1 | Rate2 | Rate3]
+  AMOUNTS: [Amount1 | Amount2 | Amount3]
+  SUBTOTAL: [Amount before GST]
+  GST: [GST amount]
+  TOTAL: [Total amount including GST]
+  
+  EXAMPLE OUTPUT:
+  SERVICE_PROVIDER: SMITH & ASSOCIATES LEGAL
+  PROVIDER_ABN: 45 678 901 234
+  PROVIDER_ADDRESS: 789 Collins Street, Melbourne VIC 3000
+  CLIENT: ABC COMPANY PTY LTD
+  INVOICE_NUMBER: SA-2024-0123
+  DATE: 15/06/2024
+  SERVICE_PERIOD: May 2024
+  SERVICES: Contract Review | Legal Consultation | Document Preparation
+  HOURS: 2.5 | 1.0 | 3.5
+  RATES: 450.00 | 450.00 | 350.00
+  AMOUNTS: 1125.00 | 450.00 | 1225.00
+  SUBTOTAL: 2545.45
+  GST: 254.55
+  TOTAL: 2800.00
+  
+  ATO_PROFESSIONAL_REQUIREMENTS:
+  - Business purpose must be documented
+  - Professional services generally 100% deductible
+  - ABN verification confirms legitimate provider
+  - Detailed description aids audit defense
+
+# Parking and toll specialized extraction
+parking_toll_extraction_prompt: |
+  <image>
+  Extract information from this Australian parking/toll receipt for vehicle expense claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  OPERATOR: [Parking/toll operator name]
+  OPERATOR_ABN: [ABN if visible]
+  LOCATION: [Specific location/address]
+  DATE: [DD/MM/YYYY]
+  TIME_IN: [Entry time HH:MM]
+  TIME_OUT: [Exit time HH:MM]
+  DURATION: [Parking duration]
+  VEHICLE_REG: [Vehicle registration if shown]
+  RATE: [Hourly/daily rate]
+  AMOUNT: [Parking charge excluding GST]
+  GST: [GST amount]
+  TOTAL: [Total amount including GST]
+  
+  EXAMPLE OUTPUT:
+  OPERATOR: WILSON PARKING
+  OPERATOR_ABN: 56 789 012 345
+  LOCATION: 123 Collins Street, Melbourne
+  DATE: 15/06/2024
+  TIME_IN: 09:15
+  TIME_OUT: 17:30
+  DURATION: 8h 15m
+  VEHICLE_REG: ABC123
+  RATE: 25.00 per day
+  AMOUNT: 22.73
+  GST: 2.27
+  TOTAL: 25.00
+  
+  ATO_PARKING_REQUIREMENTS:
+  - Business purpose required for deduction
+  - Location must be business-related destination
+  - Date and time help verify business use
+  - GST component deductible for registered businesses
+
+# Other document specialized extraction (fallback)
+other_document_extraction_prompt: |
+  <image>
+  Extract information from this Australian work-related document for business expense claims.
+  
+  CRITICAL: Use EXACT KEY-VALUE format below - NO JSON, NO other formats.
+  
+  DOCUMENT_TYPE: [Type of document]
+  BUSINESS_NAME: [Company/organization name]
+  ABN: [ABN if visible]
+  DATE: [DD/MM/YYYY]
+  DESCRIPTION: [What goods/services provided]
+  REFERENCE: [Invoice/receipt number if any]
+  AMOUNT: [Amount excluding GST]
+  GST: [GST amount if applicable]
+  TOTAL: [Total amount]
+  PURPOSE: [Business purpose if determinable]
+  
+  EXAMPLE OUTPUT:
+  DOCUMENT_TYPE: Service Receipt
+  BUSINESS_NAME: LOCAL SERVICES PTY LTD
+  ABN: 67 890 123 456
+  DATE: 15/06/2024
+  DESCRIPTION: Equipment maintenance service
+  REFERENCE: SVC-2024-789
+  AMOUNT: 136.36
+  GST: 13.64
+  TOTAL: 150.00
+  PURPOSE: Business equipment maintenance
+  
+  ATO_OTHER_REQUIREMENTS:
+  - Clear business purpose required
+  - Amount and date mandatory for claims
+  - GST breakdown aids tax calculations
+  - Detailed description supports audit defense
+
+  
+# === LEGACY JSON PROMPTS (Backward Compatibility) ===
+# Note: JSON extraction is less reliable and may fail on complex receipts
+
+# Legacy JSON prompt for receipt information extraction
+default_receipt_prompt: |
+  <image>
+  Extract these fields from the provided Australian receipt:
+  1. date_value: The date of purchase (DD/MM/YYYY)
+  2. store_name_value: The name of the Australian store or company
+  3. tax_value: The GST (10% tax) amount
+  4. total_value: The total purchase amount
+  5. prod_item_value: List of product items purchased
+  6. prod_quantity_value: List of quantities for each product
+  7. prod_price_value: List of prices for each product
+
+  Return the results in a valid JSON format:
+  {
+    "date_value": "DATE OF PURCHASE",
+    "store_name_value": "NAME OF STORE",
+    "tax_value": "GST AMOUNT",
+    "total_value": "TOTAL AMOUNT",
+    "prod_item_value": ["ITEM1", "ITEM2", ...],
+    "prod_quantity_value": [QUANTITY1, QUANTITY2, ...],
+    "prod_price_value": [PRICE1, PRICE2, ...]
+  }
+
+  Important notes for Australian receipts:
+  - GST (Goods and Services Tax) is 10% in Australia
+  - Dates are typically in DD/MM/YYYY format
+  - Major Australian retailers include Woolworths, Coles, ALDI, Bunnings, Kmart, etc.
+  - Store names should be in all capitals as they typically appear on receipts
+  - Ensure all lists have matching lengths
+  - If a field cannot be found, use an empty string or empty list as appropriate
+  - Total amount should include GST
+
+# Simple prompt for minimal, direct extraction
+simple_receipt_prompt: |
+  <image>
+  Extract information from this receipt and return it in JSON format.
+
+# Strict JSON-only prompt
+strict_json_prompt: |
+  <image>
+  Extract these seven fields from the provided Australian receipt image:
+  1. date_value
+  2. store_name_value
+  3. tax_value (GST amount)
+  4. total_value
+  5. prod_item_value
+  6. prod_quantity_value
+  7. prod_price_value
+
+  Return the results in JSON format. An example JSON format is:
+
+  JSON Output:
+  {
+  "date_value": "16/3/2023",
+  "store_name_value": "WOOLWORTHS METRO",
+  "tax_value": "3.82",
+  "total_value": "42.08",
+  "prod_item_value": [
+  "MILK 2L",
+  "BREAD MULTIGRAIN",
+  "EGGS FREE RANGE 12PK"
+  ],
+  "prod_quantity_value": [
+  "1",
+  "2",
+  "1"
+  ],
+  "prod_price_value": [
+  "4.50",
+  "8.00",
+  "7.60"
+  ]
+  }
+
+  Only return the values for the seven keys specified. Do not return any additional key-value pairs.
+  Do not output any additional information, notes, reasoning, or explanations. Output only the valid JSON.
+
+# Detailed prompt with field explanations
+detailed_receipt_prompt: |
+  <image>
+  Extract these seven fields from the provided Australian receipt image:
+  1. date_value
+  2. store_name_value
+  3. tax_value (GST amount)
+  4. total_value
+  5. prod_item_value
+  6. prod_quantity_value
+  7. prod_price_value
+
+  Return the results in JSON format. An example JSON format is:
+
+  JSON Output:
+  {
+  "date_value": "16/3/2023",
+  "store_name_value": "WOOLWORTHS METRO",
+  "tax_value": "3.82",
+  "total_value": "42.08",
+  "prod_item_value": [
+  "MILK 2L",
+  "BREAD MULTIGRAIN",
+  "EGGS FREE RANGE 12PK"
+  ],
+  "prod_quantity_value": [
+  "1",
+  "2",
+  "1"
+  ],
+  "prod_price_value": [
+  "4.50",
+  "8.00",
+  "7.60"
+  ]
+  }
+
+  For the key "date_value" return the date in the image.
+  For the key "store_name_value" return the name of the store in the image.
+  For the key "tax_value" return the GST (Australian Goods and Services Tax) amount in the image.
+  For the key "total_value" return the total including GST in the image.
+  For the key "prod_item_value" return the description of each item purchased in the image. If there is more than one, return them all in a list.
+  For the key "prod_quantity_value" return the number of each type of item purchased in the image. If there is more than one, return them all in a list.
+  For the key "prod_price_value" return the total cost of each type of item purchased in the image. If there is more than one, return them all in a list.
+  Only return the values for the seven keys specified. Do not return any additional key-value pairs.
+  Do not output any additional information, notes, reasoning, or explanations. Output only the valid JSON that starts with { and ends with }.
+
+# Optimized Australian prompt for better field extraction accuracy
+australian_optimized_prompt: |
+  <image>
+  You MUST extract ALL product information from this Australian receipt. Look carefully at every line item.
+
+  Extract these seven fields from the provided Australian receipt image:
+  1. date_value - The purchase date in DD/MM/YYYY format
+  2. store_name_value - The store name (WOOLWORTHS, COLES, ALDI, IGA, etc.)
+  3. tax_value - The GST amount (look for "GST", "TAX", or 10% calculation)
+  4. total_value - The final total amount
+  5. prod_item_value - ALL products purchased (as a list)
+  6. prod_quantity_value - Quantity for each product (as a list, same order as products)
+  7. prod_price_value - Price for each product (as a list, same order as products)
+
+  CRITICAL: You MUST extract ALL products, quantities, and prices. Do not leave these lists empty.
+
+  Return ONLY valid JSON in this exact format:
+
+  {
+  "date_value": "16/03/2023",
+  "store_name_value": "WOOLWORTHS",
+  "tax_value": "3.82",
+  "total_value": "42.08",
+  "prod_item_value": [
+  "MILK 2L",
+  "BREAD MULTIGRAIN",
+  "EGGS FREE RANGE 12PK"
+  ],
+  "prod_quantity_value": [
+  "1",
+  "2",
+  "1"
+  ],
+  "prod_price_value": [
+  "4.50",
+  "8.00",
+  "7.60"
+  ]
+  }
+
+  REQUIREMENTS:
+  - Extract the purchase date in DD/MM/YYYY format
+  - Extract GST/tax amount (typically 10% in Australia)
+  - Extract ALL individual products, quantities, and prices
+  - Ensure all three product lists have the same length
+  - Use clean values without extra commas or symbols
+  - Output ONLY the JSON object, no other text
+
+# ========================================================================
+# Prompts from Huaifeng_Test_InternVL.ipynb - Original Test Cases
+# ========================================================================
+
+# Conference relevance check prompt
+conference_relevance_prompt: |
+  <image>
+  Is this relevant to a claim about attending academic conference?
+
+# Business expense relevance check prompt  
+business_expense_prompt: |
+  <image>
+  Is this relevant to a claim about car expense?
+
+# Speaker listing prompt
+speaker_list_prompt: |
+  <image>
+  list all the speakers
+
+# Basic JSON extraction for receipts (company, address, phone, date, ABN, total)
+huaifeng_receipt_json_prompt: |
+  <image>
+  Extract receipt information and return ONLY valid JSON format.
+
+  Required fields:
+  - company_name: Store/company name
+  - address: Store address (escape newlines as \\n)
+  - phone_number: Phone number
+  - date: Date in DD/MM/YYYY format
+  - ABN: Australian Business Number
+  - total_amount: Total amount as number
+
+  Example format:
+  {
+    "company_name": "WOOLWORTHS",
+    "address": "123 Main St, Sydney NSW 2000",
+    "phone_number": "(02) 1234 5678",
+    "date": "15/06/2024",
+    "ABN": "88 000 014 675",
+    "total_amount": 45.67
+  }
+
+  IMPORTANT: Return ONLY the JSON object. No additional text, explanations, or formatting.
+
+# Multi-receipt JSON extraction prompt
+multi_receipt_json_prompt: |
+  <image>
+  there are two receipts on this image. read the text and return information in JSON format. I need company name, address, phone number, date, ABN, and total amount
+
+# Multi-receipt relevance check prompt
+multi_receipt_relevance_prompt: |
+  <image>
+  there are two receipts on this image. Are these two receipts relevant to a claim about car expense?
+
+# Detailed receipt extraction with item information
+detailed_receipt_json_prompt: |
+  <image>
+  read the text and return information in JSON format. I need company name, address, phone number, date, item name, number of items, item price, and total amount
+
+# Generic document description prompt
+document_description_prompt: |
+  <image>
+  What type of document is this? Provide a brief description.
+
+# Business expense relevance prompt (generic)
+expense_relevance_prompt: |
+  <image>
+  Is this relevant to a business expense claim?
+
+# Minimal simplified prompt to force SROIE schema output
+minimal_sroie_prompt: |
+  <image>
+  Output JSON with these exact keys:
+  {
+  "date_value": "",
+  "store_name_value": "",
+  "tax_value": "",
+  "total_value": "",
+  "prod_item_value": [],
+  "prod_quantity_value": [],
+  "prod_price_value": []
+  }
+
+# Ultra-strict JSON prompt with explicit syntax rules
+ultra_strict_json_prompt: |
+  <image>
+  CRITICAL: Output ONLY valid JSON. No extra text. No explanations.
+  
+  SYNTAX RULES:
+  - Close ALL quotes with "
+  - NO trailing commas 
+  - NO extra newlines in strings
+  - Arrays use ["item1","item2"] format
+  
+  BAD: "Coffee 200g,    GOOD: "Coffee 200g"
+  BAD: "total": "123",  GOOD: "total": "123"
+  
+  OUTPUT FORMAT:
+  {"date_value":"","store_name_value":"","tax_value":"","total_value":"","prod_item_value":[],"prod_quantity_value":[],"prod_price_value":[]}
+
+# Enhanced JSON prompt with comprehensive error prevention
+enhanced_json_prompt: |
+  <image>
+  EXTRACT receipt data and return ONLY valid JSON. Follow these rules EXACTLY:
+
+  JSON SYNTAX REQUIREMENTS:
+  1. Use double quotes " for ALL strings (never single quotes ')
+  2. NO trailing commas anywhere: {"key":"value"} not {"key":"value",}
+  3. NO line breaks inside string values
+  4. Arrays must be properly formatted: ["item1","item2","item3"]
+  5. Numbers as strings: "12.50" not 12.50
+  6. Empty values: "" for missing strings, [] for missing arrays
+
+  FIELD EXTRACTION RULES:
+  - date_value: Find purchase date in DD/MM/YYYY format
+  - store_name_value: Store name (WOOLWORTHS, COLES, etc.)
+  - tax_value: GST amount (look for GST/TAX line)
+  - total_value: Final total amount
+  - prod_item_value: ALL product names as array
+  - prod_quantity_value: Quantities for each product (same order)
+  - prod_price_value: Prices for each product (same order)
+
+  CRITICAL: Extract ALL products. If you see 5 items, return 5 items in each array.
+
+  EXAMPLE OUTPUT (copy this structure exactly):
+  {"date_value":"16/03/2023","store_name_value":"WOOLWORTHS","tax_value":"3.82","total_value":"42.08","prod_item_value":["MILK 2L","BREAD","EGGS"],"prod_quantity_value":["1","2","1"],"prod_price_value":["4.50","8.00","7.60"]}
+
+  Return ONLY the JSON object. No explanations, no markdown, no extra text.
+
+# Australian business receipt prompt with comprehensive field extraction
+australian_business_receipt_prompt: |
+  <image>
+  EXTRACT ALL information from this Australian receipt and return ONLY valid JSON.
+
+  REQUIRED FIELDS:
+  - supplier_name: Business name providing goods/services
+  - supplier_abn: Australian Business Number (ABN) - 11 digits with spaces
+  - payer_name: Customer/member name if shown (or "" if not visible)
+  - invoice_date: Date in DD/MM/YYYY format (Australian standard)
+  - gst_amount: GST/Tax amount in dollars
+  - total_amount: Total amount paid including GST
+  - payment_method: How payment was made (Cash/Card/EFTPOS/etc)
+  - items: Array of product/service descriptions
+  - quantities: Array of quantities for each item (same order as items)
+  - item_prices: Array of individual prices for each item
+
+  AUSTRALIAN RECEIPT RULES:
+  - ABN format: "XX XXX XXX XXX" (11 digits with spaces)
+  - Date format: DD/MM/YYYY (day first, Australian standard)
+  - GST is 10% in Australia (1/11 of GST-inclusive total)
+  - Look for "GST", "Tax amount", or similar labels
+  - Common suppliers: Woolworths, Coles, ALDI, Bunnings, Costco, IGA, etc.
+  - Payment: Cash, EFTPOS, Credit, MasterCard, Visa, etc.
+
+  JSON SYNTAX:
+  - Use double quotes for ALL strings
+  - NO trailing commas
+  - Numbers as strings: "58.88" not 58.88
+  - Empty fields: "" for missing data
+
+  EXAMPLE OUTPUT:
+  {"supplier_name":"COSTCO WHOLESALE AUSTRALIA","supplier_abn":"57 104 012 893","payer_name":"","invoice_date":"08/06/2024","gst_amount":"5.35","total_amount":"58.88","payment_method":"MASTERCARD CREDIT","items":["13ULP FUEL"],"quantities":["32.230L"],"item_prices":["58.88"]}
+
+  Extract ALL visible information. Return ONLY the JSON object.
+

@@ -1,0 +1,88 @@
+# Offline-compatible environment for corporate networks
+# Comment out packages not available in your local repositories
+
+name: internvl_env_offline
+channels:
+  - pytorch      # Usually mirrored in corporate environments
+  - nvidia       # May not be available offline
+  - conda-forge  # Core channel, usually mirrored
+
+dependencies:
+  # Core Python (almost always available)
+  - python>=3.11,<3.12
+  - pip
+  - setuptools
+  - wheel
+
+  # PyTorch (check if nvidia channel is mirrored)
+  - pytorch                    # Usually available
+  - torchvision               # Usually available  
+  # - pytorch-cuda            # May not be available offline
+  # - pytorch-mutex=*=cuda    # May not be available offline
+
+  # Scientific computing (conda-forge - usually mirrored)
+  - numpy
+  - scipy
+  - pandas
+  - scikit-learn
+  # - scikit-image            # May not be available
+
+  # Image processing
+  - pillow                    # Usually available
+  # - opencv-python           # Often missing, try opencv instead
+
+  # Basic ML libraries
+  # - transformers            # Rarely in offline repos
+  # - accelerate              # Rarely in offline repos
+  # - safetensors             # Rarely in offline repos
+  # - timm                    # Rarely in offline repos
+  # - einops                  # May not be available
+
+  # Jupyter (usually available)
+  - ipython
+  - ipykernel
+  - jupyter-client
+  - jupyter-core
+  # - ipywidgets              # May not be available
+
+  # Visualization
+  - matplotlib                # Usually available
+  # - rich                    # May not be available
+
+  # Basic utilities
+  - pyyaml                    # Usually available
+  - requests                  # Usually available
+  - tqdm                      # May not be available
+  # - python-dotenv           # Rarely available
+  # - click                   # May not be available
+  # - typer                   # Rarely available
+
+  # Testing
+  - pytest                    # Usually available
+  # - pytest-cov              # May not be available
+  # - ruff                    # Rarely available
+
+  # Minimal pip packages (check your pip index)
+  - pip:
+      # Most of these will likely need to be installed from wheels
+      # - tokenizers
+      # - pydantic
+      # - pytesseract
+      # - dateparser
+
+variables:
+  KMP_DUPLICATE_LIB_OK: "TRUE"
+
+prefix: /home/jovyan/.conda/envs/internvl_env_offline
+
+# Conda Environment Management Commands
+# =====================================
+# Create environment:     conda env create -f internvl_env_offline.yml
+# Activate environment:   conda activate internvl_env_offline
+# Deactivate environment: conda deactivate
+# Update environment:     conda env update -f internvl_env_offline.yml --prune
+# Remove environment:     conda env remove -n internvl_env_offline
+# List environments:      conda env list
+# Export environment:     conda env export > environment.yml
+# Install new package:    conda install -n internvl_env_offline <package>
+# Remove package:         conda remove -n internvl_env_offline <package>

@@ -1,0 +1,81 @@
+name: internvl_env
+channels:
+  - defaults
+dependencies:
+  # Core Python and environment
+  - python>=3.11,<3.12
+  - pip
+  - setuptools
+  - wheel
+
+  # PyTorch ecosystem (CUDA support)
+  - pytorch
+  - torchvision  
+  - pytorch-cuda
+  - pytorch-mutex=*=cuda
+
+  # Scientific computing
+  - numpy
+  - scipy
+  - pandas
+  - scikit-learn
+  - scikit-image
+
+  # Image processing
+  - pillow
+  - opencv-python
+
+  # ML/AI libraries
+  - transformers
+  - accelerate
+  - safetensors
+  - timm
+  - einops
+
+  # Jupyter and development
+  - ipython
+  - ipykernel
+  - jupyter-client
+  - jupyter-core
+  - ipywidgets
+
+  # Visualization
+  - matplotlib
+  - rich
+
+  # Utilities
+  - pyyaml
+  - python-dotenv
+  - requests
+  - tqdm
+  - click
+  - typer
+
+  # Testing and quality
+  - pytest
+  - pytest-cov
+  - ruff
+
+  # Additional dependencies via pip
+  - pip:
+      # - huggingface-hub
+      - tokenizers
+      - pydantic
+      - pytesseract
+      - dateparser
+# variables:
+#   KMP_DUPLICATE_LIB_OK: "TRUE"
+prefix: /home/jovyan/.conda/envs/internvl_env
+
+
+# Conda Environment Management Commands
+# =====================================
+# Create environment:     conda env create -f internvl_env.yml
+# Activate environment:   conda activate internvl_env
+# Deactivate environment: conda deactivate
+# Update environment:     conda env update -f internvl_env.yml --prune
+# Remove environment:     conda env remove -n internvl_env
+# List environments:      conda env list
+# Export environment:     conda env export > environment.yml
+# Install new package:    conda install -n internvl_env <package>
+# Remove package:         conda remove -n internvl_env <package>
