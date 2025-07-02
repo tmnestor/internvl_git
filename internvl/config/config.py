@@ -180,30 +180,31 @@ def load_config(args: Optional[argparse.Namespace] = None) -> Dict[str, Any]:
     Returns:
         Dict containing all configuration settings
     """
-    # Load environment variables
-    load_dotenv()
+    # Load environment variables with variable interpolation
+    load_dotenv(interpolate=True)
 
-    # Base configuration from environment - simple path variables
+    # Base configuration from environment with INTERNVL prefix
     config = {
-        # Path settings - use environment variables or sensible defaults
-        "image_folder_path": get_env("IMAGE_FOLDER_PATH", "./data/images"),
-        "output_path": get_env("OUTPUT_PATH", "./output"),
-        "input_path": get_env("INPUT_PATH", "./data"),
-        "model_path": get_env("MODEL_PATH", "OpenGVLab/InternVL2_5-1B"),
-        "data_path": get_env("INPUT_PATH", "./data"),  # Use INPUT_PATH for consistency
-        "prompts_path": get_env("PROMPTS_PATH", "./prompts.yaml"),
+        # Path settings - use INTERNVL prefixed environment variables
+        "image_folder_path": get_env("INTERNVL_IMAGE_FOLDER_PATH", "./examples"),
+        "output_path": get_env("INTERNVL_OUTPUT_PATH", "./output"),
+        "input_path": get_env("INTERNVL_INPUT_PATH", "./"),
+        "model_path": get_env("INTERNVL_MODEL_PATH", "OpenGVLab/InternVL2_5-1B"),
+        "prompts_path": get_env("INTERNVL_PROMPTS_PATH", "./prompts.yaml"),
+        "synthetic_data_path": get_env("INTERNVL_SYNTHETIC_DATA_PATH", "./data/synthetic"),
+        "sroie_data_path": get_env("INTERNVL_SROIE_DATA_PATH", "./data/sroie"),
         # Model settings
-        "image_size": get_env("IMAGE_SIZE", 448, var_type=int),
-        "max_tiles": get_env("MAX_TILES", 12, var_type=int),
-        "max_workers": get_env("MAX_WORKERS", 8, var_type=int),
-        "max_tokens": get_env("MAX_TOKENS", 1024, var_type=int),
-        "do_sample": get_env("DO_SAMPLE", False, var_type=bool),
+        "image_size": get_env("INTERNVL_IMAGE_SIZE", 448, var_type=int),
+        "max_tiles": get_env("INTERNVL_MAX_TILES", 8, var_type=int),
+        "max_workers": get_env("INTERNVL_MAX_WORKERS", 6, var_type=int),
+        "max_tokens": get_env("INTERNVL_MAX_TOKENS", 2048, var_type=int),
+        "do_sample": get_env("INTERNVL_DO_SAMPLE", False, var_type=bool),
         # Prompt settings
-        "prompt_name": get_env("PROMPT_NAME", "default_receipt_prompt"),
+        "prompt_name": get_env("INTERNVL_PROMPT_NAME", "key_value_receipt_prompt"),
         # Environment information
-        "environment": get_env("ENVIRONMENT", detect_environment()),
+        "environment": get_env("INTERNVL_ENV", detect_environment()),
         # Logging settings
-        "transformers_log_level": get_env("TRANSFORMERS_LOG_LEVEL", "WARNING"),
+        "transformers_log_level": get_env("INTERNVL_TRANSFORMERS_LOG_LEVEL", "ERROR"),
     }
 
     # Override with command-line arguments if provided
