@@ -36,6 +36,15 @@ REQUIRED_PACKAGES = {
     "python-dotenv": "1.0.0",
 }
 
+# Mapping from package names to import names (for packages where they differ)
+PACKAGE_IMPORT_MAP = {
+    "pillow": "PIL",
+    "scikit-learn": "sklearn",
+    "opencv-python": "cv2",
+    "pyyaml": "yaml",
+    "python-dotenv": "dotenv",
+}
+
 # Optional but recommended packages
 OPTIONAL_PACKAGES = {
     "ruff": "0.0.270",
@@ -51,9 +60,13 @@ def check_packages(packages, optional=False):
     outdated = []
 
     for package, min_version in packages.items():
+        # Use the correct import name (some packages have different import vs package names)
+        import_name = PACKAGE_IMPORT_MAP.get(package, package)
+        
         try:
-            importlib.import_module(package)
+            importlib.import_module(import_name)
             try:
+                # Use package name for version lookup (not import name)
                 pkg_version = version(package)
                 if pkg_version < min_version:
                     outdated.append((package, pkg_version, min_version))
