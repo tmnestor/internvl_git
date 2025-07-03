@@ -49,7 +49,6 @@ model = AutoModel.from_pretrained(
     path,
     torch_dtype=torch.bfloat16,
     low_cpu_mem_usage=True,
-    use_flash_attn=True,
     trust_remote_code=True
 ).eval().cuda()
 ```
@@ -136,6 +135,14 @@ The model will be used to:
 - **Hardware:** CUDA-compatible GPU recommended (8GB+ VRAM)
 - **Storage:** Approximately 16GB for model weights
 - **Memory:** 16GB+ system RAM recommended
+
+### Performance Optimization
+- **Unsloth Integration:** Recommended optimization for all GPU types
+  - 2x faster fine-tuning compared to standard methods
+  - 60-70% less VRAM usage
+  - Supports 4-8x longer context lengths
+  - Compatible with CUDA Capability 7.0+ (includes V100, T4, RTX series)
+  - Installation: `pip install "unsloth[colab] @ git+https://github.com/unslothai/unsloth.git"`
 
 ---
 

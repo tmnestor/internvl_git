@@ -145,6 +145,15 @@ The model will be used to:
 - **Memory:** 32GB+ system RAM recommended for optimal performance
 - **Deployment:** Supports distributed inference across multiple GPUs
 
+### Performance Optimization
+- **Unsloth Integration:** Recommended optimization solution for all GPU types
+  - 1.5-2x faster fine-tuning than standard methods
+  - 60-70% less VRAM usage
+  - Supports 4-8x longer context lengths
+  - Compatible with V100, T4, RTX series and newer GPUs
+  - Installation: `pip install "unsloth[colab] @ git+https://github.com/unslothai/unsloth.git"`
+  - Note: Single-GPU deployment only (multi-GPU support in beta)
+
 ---
 
 ## Competitive Positioning
