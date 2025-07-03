@@ -35,14 +35,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--test-image-dir",
         type=str,
-        required=True,
-        help="Directory containing test images",
+        default=None,
+        help="Directory containing test images (defaults to SROIE images from config)",
     )
     parser.add_argument(
         "--output-dir",
         type=str,
-        required=True,
-        help="Directory to save prediction files",
+        default=None,
+        help="Directory to save prediction files (defaults to output/predictions from config)",
     )
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose output"
@@ -72,6 +72,19 @@ def main() -> int:
     # Setup logging with appropriate levels
     setup_logging(log_level, transformers_log_level=transformers_log_level)
     logger = get_logger(__name__)
+
+    # Use environment defaults if arguments not provided
+    if args.test_image_dir is None:
+        # Default to SROIE images
+        sroie_data_path = Path(config.get('sroie_data_path', 'data/sroie'))
+        args.test_image_dir = str(sroie_data_path / "images")
+        logger.info(f"Using default test image directory from config: {args.test_image_dir}")
+    
+    if args.output_dir is None:
+        # Default to output/predictions
+        output_base = Path(config.get('output_path', 'output'))
+        args.output_dir = str(output_base / "predictions")
+        logger.info(f"Using default output directory from config: {args.output_dir}")
 
     logger.info(f"Generating predictions for images in: {args.test_image_dir}")
 
