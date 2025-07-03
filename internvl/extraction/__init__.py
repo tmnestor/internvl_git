@@ -6,10 +6,9 @@ Key-Value extraction is the recommended approach for production use.
 """
 
 # Key-Value extraction (PREFERRED for production)
-from .key_value_parser import extract_key_value_enhanced
-
 # Bank statement parsing
 from .bank_statement_parser import extract_bank_statement_with_highlights
+from .key_value_parser import extract_key_value_enhanced
 
 # Data normalization and validation
 from .normalization import (
