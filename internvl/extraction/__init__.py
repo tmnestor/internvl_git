@@ -17,7 +17,7 @@ from .normalization import (
     normalize_store_name,
     post_process_prediction,
 )
-from .validation import validate_extraction_result
+from .validation import validate_and_fix_json
 
 __all__ = [
     # Key-Value extraction (PREFERRED)
@@ -33,5 +33,5 @@ __all__ = [
     "post_process_prediction",
     
     # Validation
-    "validate_extraction_result",
+    "validate_and_fix_json",
 ]

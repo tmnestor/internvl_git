@@ -7,7 +7,7 @@ This module provides functions for normalizing field values extracted from model
 import re
 from typing import Any, Dict
 
-from internvl.extraction.json_extraction_fixed import extract_structured_data
+# Note: Legacy JSON extraction removed - use Key-Value extraction instead
 from internvl.utils import get_logger
 
 # Get logger for this module
@@ -113,7 +113,8 @@ def post_process_prediction(raw_text: str) -> Dict[str, Any]:
     """
     Process raw model output to extract and normalize structured data.
     
-    Uses hybrid extraction: tries key-value format first, then JSON fallback.
+    DEPRECATED: This function is maintained for compatibility with legacy evaluation scripts.
+    For new development, use extract_key_value_enhanced from key_value_parser instead.
 
     Args:
         raw_text: Raw text output from the model
@@ -121,11 +122,28 @@ def post_process_prediction(raw_text: str) -> Dict[str, Any]:
     Returns:
         Normalized structured data object
     """
-    # Use hybrid extraction (KV format first, then JSON fallback)
-    data = extract_structured_data(raw_text)
-
-    if not data:
-        return {"error": "Could not extract valid JSON"}
+    import json
+    
+    # Simple JSON extraction for legacy compatibility
+    try:
+        # Try to find JSON in the text
+        lines = raw_text.strip().split('\n')
+        json_text = None
+        
+        for line in lines:
+            line = line.strip()
+            if line.startswith('{') and line.endswith('}'):
+                json_text = line
+                break
+        
+        if json_text:
+            data = json.loads(json_text)
+        else:
+            # Fallback: return empty structure
+            data = {}
+    except (json.JSONDecodeError, Exception):
+        logger.warning(f"Could not parse JSON from: {raw_text[:100]}...")
+        return {"error": "Could not extract valid JSON", "raw_text": raw_text[:200]}
 
     # Normalize fields if they exist
     if "date_value" in data:
@@ -139,8 +157,6 @@ def post_process_prediction(raw_text: str) -> Dict[str, Any]:
 
     if "total_value" in data:
         data["total_value"] = normalize_number(data["total_value"])
-
-# Confidence scoring temporarily disabled for emergency restore
 
     return data
 
