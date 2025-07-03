@@ -3,7 +3,7 @@
 Verify that the Python environment has all required packages for InternVL.
 Run this after setting up a new environment to confirm it's correctly configured.
 
-Usage: python -m src.internvl.utils.verify_env
+Usage: python -m internvl.utils.verify_env
 """
 
 import importlib
@@ -13,7 +13,7 @@ from importlib.metadata import version
 from internvl.utils.path import enforce_module_invocation
 
 # Enforce module invocation pattern
-enforce_module_invocation("src.internvl.utils")
+enforce_module_invocation("internvl.utils")
 
 # List of required packages and their minimum versions
 REQUIRED_PACKAGES = {
