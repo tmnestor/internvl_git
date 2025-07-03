@@ -1,30 +1,38 @@
 """
 Extraction module for InternVL Evaluation
 
-This module handles JSON extraction and normalization.
+This module handles Key-Value extraction (preferred) and data normalization.
+Key-Value extraction is the recommended approach for production use.
 """
 
-from .json_extraction import extract_json_from_response, extract_json_from_text
-from .json_extraction_fixed import (
-    extract_structured_data,
-    is_valid_extraction,
-    parse_kv_format,
-)
+# Key-Value extraction (PREFERRED for production)
+from .key_value_parser import extract_key_value_enhanced
+
+# Bank statement parsing
+from .bank_statement_parser import extract_bank_statement_with_highlights
+
+# Data normalization and validation
 from .normalization import (
     normalize_date,
     normalize_number,
     normalize_store_name,
     post_process_prediction,
 )
+from .validation import validate_extraction_result
 
 __all__ = [
-    "extract_json_from_text",
-    "extract_json_from_response",
-    "extract_structured_data",
-    "parse_kv_format", 
-    "is_valid_extraction",
+    # Key-Value extraction (PREFERRED)
+    "extract_key_value_enhanced",
+    
+    # Bank statement parsing
+    "extract_bank_statement_with_highlights",
+    
+    # Data normalization
     "normalize_date",
-    "normalize_store_name",
+    "normalize_store_name", 
     "normalize_number",
     "post_process_prediction",
+    
+    # Validation
+    "validate_extraction_result",
 ]
