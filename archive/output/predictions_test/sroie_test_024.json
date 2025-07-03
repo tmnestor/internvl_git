@@ -1,0 +1,27 @@
+{
+  "date_value": "03/06/2018",
+  "store_name_value": "OLD TOWN WHITE COFFEE",
+  "tax_value": "28.00",
+  "total_value": "28.00",
+  "prod_item_value": [
+    "SN2 Soup Pan Meal",
+    "ST8",
+    "SN8 Sp Nod Special",
+    "WC1 (C) WC",
+    "VA9 French Fries Bkt"
+  ],
+  "prod_quantity_value": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "prod_price_value": [
+    10.9,
+    12.97,
+    4.15,
+    4.15,
+    28.02
+  ]
+}

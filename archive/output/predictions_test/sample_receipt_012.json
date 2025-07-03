@@ -1,0 +1,27 @@
+{
+  "date_value": "05/09/2025",
+  "store_name_value": "COLES",
+  "tax_value": "13.64",
+  "total_value": "150.04",
+  "prod_item_value": [
+    "Milk 2L",
+    "Coffee 200g",
+    "Chocolate",
+    "Chicken Breast",
+    "Eggs 12pk"
+  ],
+  "prod_quantity_value": [
+    3,
+    3,
+    2,
+    1,
+    2
+  ],
+  "prod_price_value": [
+    10.63,
+    17.19,
+    12.31,
+    12.56,
+    14.7
+  ]
+}

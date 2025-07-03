@@ -1,0 +1,70 @@
+{
+  "overall_metrics": {
+    "Precision": 0.9743713344446103,
+    "Recall": 0.9824247417652591,
+    "F1-score": 0.9780848611737234,
+    "BLEU Score": 0.9743713344446103
+  },
+  "field_metrics": {
+    "date_value": {
+      "Precision": 1.0,
+      "Recall": 1.0,
+      "F1-score": 1.0,
+      "BLEU Score": 1.0
+    },
+    "store_name_value": {
+      "Precision": 1.0,
+      "Recall": 1.0,
+      "F1-score": 1.0,
+      "BLEU Score": 1.0
+    },
+    "tax_value": {
+      "Precision": 0.9716666666666668,
+      "Recall": 0.9783333333333334,
+      "F1-score": 0.9746296296296297,
+      "BLEU Score": 0.9716666666666668
+    },
+    "total_value": {
+      "Precision": 0.9793650793650794,
+      "Recall": 0.9944444444444446,
+      "F1-score": 0.9862859362859363,
+      "BLEU Score": 0.9793650793650794
+    },
+    "prod_item_value": {
+      "Precision": 1.0,
+      "Recall": 1.0,
+      "F1-score": 1.0,
+      "BLEU Score": 1.0
+    },
+    "prod_quantity_value": {
+      "Precision": 0.969090909090909,
+      "Recall": 1.0,
+      "F1-score": 0.983157894736842,
+      "BLEU Score": 0.969090909090909
+    },
+    "prod_price_value": {
+      "Precision": 0.9748480204342272,
+      "Recall": 0.9866201563442942,
+      "F1-score": 0.9806054287373785,
+      "BLEU Score": 0.9748480204342272
+    },
+    "gst_calculation": {
+      "Precision": 0.9,
+      "Recall": 0.9,
+      "F1-score": 0.9,
+      "BLEU Score": 0.9
+    }
+  },
+  "scalar_metrics": {
+    "Precision": 0.9877579365079365,
+    "Recall": 0.9931944444444445,
+    "F1-score": 0.9902288914788915,
+    "BLEU Score": 0.9877579365079365
+  },
+  "list_metrics": {
+    "Precision": 0.9813129765083787,
+    "Recall": 0.9955400521147647,
+    "F1-score": 0.9879211078247402,
+    "BLEU Score": 0.9813129765083787
+  }
+}

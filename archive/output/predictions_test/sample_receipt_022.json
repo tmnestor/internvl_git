@@ -1,0 +1,27 @@
+{
+  "date_value": "28/04/2025",
+  "store_name_value": "BIG W",
+  "tax_value": "10.12",
+  "total_value": "111.32",
+  "prod_item_value": [
+    "Bread",
+    "Chocolate",
+    "Chicken Breast",
+    "Rice 1kg",
+    "Milk 2L"
+  ],
+  "prod_quantity_value": [
+    1,
+    3,
+    2,
+    2,
+    3
+  ],
+  "prod_price_value": [
+    6.21,
+    13.68,
+    12.73,
+    7.35,
+    7.97
+  ]
+}

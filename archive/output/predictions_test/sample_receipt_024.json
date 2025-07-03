@@ -1,0 +1,27 @@
+{
+  "date_value": "05/03/2025",
+  "store_name_value": "TARGET",
+  "tax_value": "15.09",
+  "total_value": "165.95",
+  "prod_item_value": [
+    "Milk 2L",
+    "Rice 1kg",
+    "Chocolate",
+    "Coffee 200g",
+    "Bread"
+  ],
+  "prod_quantity_value": [
+    3,
+    3,
+    3,
+    1,
+    1
+  ],
+  "prod_price_value": [
+    17.61,
+    19.73,
+    8.37,
+    7.21,
+    21.61
+  ]
+}

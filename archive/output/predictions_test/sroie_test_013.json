@@ -1,0 +1,21 @@
+{
+  "date_value": "10/12/2017",
+  "store_name_value": "PU TIEN (M) SDN BHD",
+  "tax_value": "34.87",
+  "total_value": "36.96",
+  "prod_item_value": [
+    "Stir Fried Yam, XS",
+    "Lor Mee, XS",
+    "Chrysanthemum Tea, Iced"
+  ],
+  "prod_quantity_value": [
+    1,
+    1,
+    1
+  ],
+  "prod_price_value": [
+    12.9,
+    13.9,
+    4.9
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "date_value": "05/02/2025",
+  "store_name_value": "BIG W",
+  "tax_value": "11.84",
+  "total_value": "130.23",
+  "prod_item_value": [
+    "Milk 2L",
+    "Coffee 200g",
+    "Rice 1kg",
+    "Chicken Breast",
+    "Eggs 12pk"
+  ],
+  "prod_quantity_value": [
+    2,
+    3,
+    3,
+    1,
+    2
+  ],
+  "prod_price_value": [
+    17.54,
+    19.9,
+    4.05,
+    5.86,
+    8.72
+  ]
+}

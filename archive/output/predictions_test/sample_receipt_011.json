@@ -1,0 +1,27 @@
+{
+  "date_value": "13/04/2025",
+  "store_name_value": "WOOLWORTHS",
+  "tax_value": "13.92",
+  "total_value": "153.17",
+  "prod_item_value": [
+    "Rice",
+    "Chicken Breast",
+    "Coffee",
+    "Milk",
+    "Eggs"
+  ],
+  "prod_quantity_value": [
+    3,
+    2,
+    2,
+    3,
+    1
+  ],
+  "prod_price_value": [
+    15.9,
+    20.2,
+    7.86,
+    8.38,
+    24.21
+  ]
+}

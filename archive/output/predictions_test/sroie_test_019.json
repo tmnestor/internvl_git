@@ -1,0 +1,24 @@
+{
+  "date_value": "20/03/2018",
+  "store_name_value": "UROKO JAPANESE CUISINE SDN BHD",
+  "tax_value": "3.00",
+  "total_value": "53.00",
+  "prod_item_value": [
+    "KO NABE INANIWA",
+    "GREEN TEA",
+    "GYOZA 5pcs",
+    "GARLIC CHAHAN"
+  ],
+  "prod_quantity_value": [
+    1,
+    1,
+    1,
+    4
+  ],
+  "prod_price_value": [
+    24.0,
+    1.0,
+    15.0,
+    6.0
+  ]
+}

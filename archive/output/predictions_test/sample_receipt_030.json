@@ -1,0 +1,27 @@
+{
+  "date_value": "05/07/2025",
+  "store_name_value": "IGA",
+  "tax_value": "5.56",
+  "total_value": "61.16",
+  "prod_item_value": [
+    "Bananas",
+    "Rice",
+    "Milk",
+    "Coffee",
+    "Bread"
+  ],
+  "prod_quantity_value": [
+    3,
+    1,
+    1,
+    2,
+    3
+  ],
+  "prod_price_value": [
+    4.04,
+    4.04,
+    3.7,
+    4.45,
+    10.8
+  ]
+}

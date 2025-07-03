@@ -1,0 +1,18 @@
+{
+  "date_value": "14/10/2017",
+  "store_name_value": "SANYU STATIONERY SHOP",
+  "tax_value": "8.70",
+  "total_value": "8.70",
+  "prod_item_value": [
+    "RESTAURANT ORDER CHIT NCR",
+    "3 X 2.9000"
+  ],
+  "prod_quantity_value": [
+    3,
+    2
+  ],
+  "prod_price_value": [
+    3.5,
+    8.7
+  ]
+}

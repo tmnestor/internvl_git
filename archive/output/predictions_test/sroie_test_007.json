@@ -1,0 +1,27 @@
+{
+  "date_value": "04/12/2018",
+  "store_name_value": "AEON TAMAN UNIVERSITI",
+  "tax_value": "24.11",
+  "total_value": "23.59",
+  "prod_item_value": [
+    "QL CLASSIC EGGS",
+    "WHITE GARLIC",
+    "OLD GINGER",
+    "CHIC DRUMSTICK",
+    "DEER SESAME OI"
+  ],
+  "prod_quantity_value": [
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "prod_price_value": [
+    4.6,
+    0.88,
+    0.48,
+    3.55,
+    9.1
+  ]
+}
