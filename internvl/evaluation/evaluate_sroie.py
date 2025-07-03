@@ -15,6 +15,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from internvl.config.config import load_config
 from internvl.utils.logging import get_logger, setup_logging
 from internvl.utils.path import enforce_module_invocation
 
@@ -95,11 +96,17 @@ def main():
             prompt_name = "default_receipt_prompt"
             logger.warning(f"No prompt name provided. Using default: {prompt_name}")
 
-    # Set paths
-    project_root = Path.cwd()
-    sroie_image_dir = project_root / "data/sroie/images"
-    predictions_dir = project_root / "output/predictions_sroie"
-    ground_truth_dir = project_root / "data/sroie/ground_truth"
+    # Load configuration and get environment-configured paths
+    config = load_config()
+    
+    # Get SROIE data paths from configuration
+    sroie_data_path = Path(config.get('sroie_data_path', 'data/sroie'))
+    sroie_image_dir = sroie_data_path / "images"
+    ground_truth_dir = sroie_data_path / "ground_truth"
+    
+    # Get output path from configuration
+    output_base_dir = Path(config.get('output_path', 'output'))
+    predictions_dir = output_base_dir / "predictions_sroie"
 
     # Create predictions directory if it doesn't exist
     Path(predictions_dir).mkdir(parents=True, exist_ok=True)
@@ -107,14 +114,27 @@ def main():
     # Generate timestamp for output files
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     output_prefix = f"{args.output_prefix}_{timestamp}"
-    output_path = project_root / "output" / output_prefix
+    output_path = output_base_dir / output_prefix
 
     # Print header and environment info
     logger.info("=" * 60)
     logger.info("SROIE Evaluation Pipeline")
     logger.info("=" * 60)
-    logger.info(f"Project root: {project_root}")
+    logger.info(f"SROIE images: {sroie_image_dir}")
+    logger.info(f"Ground truth: {ground_truth_dir}")
+    logger.info(f"Predictions: {predictions_dir}")
     logger.info(f"Using prompt: {prompt_name}")
+    
+    # Check if SROIE data exists
+    if not sroie_image_dir.exists():
+        logger.error(f"SROIE image directory not found: {sroie_image_dir}")
+        logger.info("Available data directories:")
+        data_base = Path(config.get('base_path', '.')) / 'data'
+        if data_base.exists():
+            for item in data_base.iterdir():
+                if item.is_dir():
+                    logger.info(f"  - {item}")
+        return 1
 
     # Step 1: Generate predictions
     logger.info("Step 1: Generating predictions on SROIE images...")
